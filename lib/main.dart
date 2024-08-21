@@ -20,6 +20,7 @@ class MainApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: const LoginPage());
+        home: const LoginPage(),
+      );
   }
 }
