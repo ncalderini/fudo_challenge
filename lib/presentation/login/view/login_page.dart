@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fudo_challenge/domain/usecase/login_user.dart';
 import 'package:fudo_challenge/presentation/login/bloc/login_bloc.dart';
 import 'package:fudo_challenge/presentation/login/bloc/login_event.dart';
+import 'package:fudo_challenge/presentation/login/bloc/login_state.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -13,7 +15,8 @@ class LoginPage extends StatelessWidget {
         title: const Text('Login'),
       ),
       body: BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc(),
+        create: (context) =>
+            LoginBloc(loginUserUseCase: const LoginUserUseCase()),
         child: const LoginForm(),
       ),
     );
@@ -32,33 +35,63 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            const SizedBox(height: 32),
-            SizedBox(
-              height: 150,
-              width: 250,
-              child: Image.asset('assets/images/fudo_logo.png'),
-            ),
-            const SizedBox(height: 32),
-            const EmailInput(),
-            const PasswordWidget(),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // Successful Login logic
-                }
-              },
-              child: const Text('Login'),
-            ),
-          ],
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginSuccess) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: const Text('Login Success',
+                  style: TextStyle(color: Colors.white)),
+              backgroundColor: Colors.green.shade600,
+            ));
+        } else if (state is LoginError) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: Text(state.error,
+                  style: const TextStyle(color: Colors.white)),
+              backgroundColor: Colors.red.shade600,
+            ));
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              const SizedBox(height: 32),
+              SizedBox(
+                height: 150,
+                width: 250,
+                child: Image.asset('assets/images/fudo_logo.png'),
+              ),
+              const SizedBox(height: 32),
+              const EmailInput(),
+              const PasswordWidget(),
+              const SizedBox(height: 32),
+              const LoginButton(),
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class LoginButton extends StatelessWidget {
+  const LoginButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isFormValid = context.select((LoginBloc bloc) => bloc.state.isValid);
+
+    return ElevatedButton(
+      onPressed: isFormValid
+          ? () => context.read<LoginBloc>().add(const Submitted())
+          : null,
+      child: const Text('Login'),
     );
   }
 }

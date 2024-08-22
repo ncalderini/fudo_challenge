@@ -32,19 +32,13 @@ class PasswordChanged extends LoginEvent {
 }
 
 class Submitted extends LoginEvent {
-  final String email;
-  final String password;
-
-  const Submitted({
-    required this.email,
-    required this.password,
-  });
+  const Submitted();
 
   @override
-  List<Object> get props => [email, password];
+  List<Object> get props => [];
 
   @override
   String toString() {
-    return 'Submitted { email: $email, password: $password }';
+    return 'Submitted { }';
   }
 }

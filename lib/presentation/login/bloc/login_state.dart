@@ -25,3 +25,17 @@ class LoginState extends Equatable {
   @override
   List<Object> get props => [isMailValid, isPasswordValid, isValid];
 }
+
+class LoginSuccess extends LoginState {
+  const LoginSuccess()
+      : super(isMailValid: true, isPasswordValid: true, isValid: true);
+}
+
+class LoginError extends LoginState {
+  const LoginError({required this.error});
+
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}
