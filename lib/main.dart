@@ -11,16 +11,16 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Fudo Challenge',
-        theme: ThemeData(
-          colorScheme: ColorScheme.light(
-            // Specify custom colors for the dark theme.
-            primary: Colors.black,
-            surface: Colors.orange.shade600,
-          ),
-          useMaterial3: true,
+      title: 'Fudo Challenge',
+      theme: ThemeData(
+        colorScheme: ColorScheme.light(
+          // Specify custom colors for the dark theme.
+          primary: Colors.black,
+          surface: Colors.orange.shade600,
         ),
-        home: const LoginPage(),
-      );
+        useMaterial3: true,
+      ),
+      home: const LoginPage(),
+    );
   }
 }
