@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fudo_challenge/data/source/local/post_storage.dart';
 import 'package:fudo_challenge/data/source/network/post_api.dart';
@@ -44,9 +45,9 @@ class PostsList extends StatelessWidget {
             case PostStatus.success:
               return PostListView(state: state);
             case PostStatus.failure:
-              return state.posts.isNotEmpty 
-                ? PostListView(state: state) 
-                : const Center(child: Text("No data"));
+              return state.posts.isNotEmpty
+                  ? PostListView(state: state)
+                  : const Center(child: Text("No data"));
             default:
               return const Center(child: CircularProgressIndicator());
           }
@@ -64,11 +65,27 @@ class PostListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-        itemBuilder: (context, index) => ListTile(
-              title: Text(state.posts[index].title,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SearchBar(
+                backgroundColor: const WidgetStatePropertyAll(Colors.white),
+                leading: const Icon(Icons.search),
+                hintText: "Search posts by author",
+                hintStyle:
+                    const WidgetStatePropertyAll(TextStyle(color: Colors.grey)),
+                onSubmitted: (value) => {},
+              ),
+            );
+          } else {
+            return ListTile(
+              title: Text(state.posts[index - 1].title,
                   style: const TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: Text(state.posts[index].body),
-            ),
+              subtitle: Text(state.posts[index - 1].body),
+            );
+          }
+        },
         separatorBuilder: (context, index) => const Divider(),
         itemCount: state.posts.length);
   }
