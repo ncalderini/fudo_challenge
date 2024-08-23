@@ -4,6 +4,7 @@ import 'package:fudo_challenge/domain/usecase/login_user.dart';
 import 'package:fudo_challenge/presentation/login/bloc/login_bloc.dart';
 import 'package:fudo_challenge/presentation/login/bloc/login_event.dart';
 import 'package:fudo_challenge/presentation/login/bloc/login_state.dart';
+import 'package:fudo_challenge/presentation/posts/view/posts_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -45,6 +46,9 @@ class _LoginFormState extends State<LoginForm> {
                   style: TextStyle(color: Colors.white)),
               backgroundColor: Colors.green.shade600,
             ));
+          Route route = MaterialPageRoute(
+              builder: (context) => const PostsPage());
+          Navigator.pushReplacement(context, route);
         } else if (state is LoginError) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
