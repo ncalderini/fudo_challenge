@@ -2,13 +2,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class IsUserAuthenticatedUseCase {
   
-  IsUserAuthenticatedUseCase({
-    required SharedPreferences sharedPreferences,
-  }) : _prefs = sharedPreferences;
-
-  final SharedPreferences _prefs;
+  const IsUserAuthenticatedUseCase();
 
   Future<bool> call() async {
+    final _prefs = await SharedPreferences.getInstance();
     return _prefs.getBool('authenticated') ?? false;
   }
 }
