@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:fudo_challenge/domain/exceptions/internet_exception.dart';
 import 'package:fudo_challenge/domain/usecase/get_posts.dart';
 import 'package:fudo_challenge/presentation/posts/bloc/post_event.dart';
 import 'package:fudo_challenge/presentation/posts/bloc/post_state.dart';
@@ -24,7 +25,15 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           ),
         );
       }
-    } catch (_) {
+    } catch (exception) {
+      if (exception is InternetException) {
+        return emit(
+          state.copyWith(
+            status: PostStatus.failure,
+            posts: exception.cachedData,
+          ),
+        );
+      }
       emit(state.copyWith(status: PostStatus.failure));
     }
   }

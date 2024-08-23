@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fudo_challenge/data/source/local/post_storage.dart';
 import 'package:fudo_challenge/data/source/network/post_api.dart';
 import 'package:fudo_challenge/domain/repository/post_repository.dart';
 import 'package:fudo_challenge/domain/usecase/get_posts.dart';
@@ -16,8 +17,8 @@ class PostsPage extends StatelessWidget {
         appBar: AppBar(title: const Text("Posts")),
         body: BlocProvider<PostBloc>(
             create: (context) => PostBloc(
-                getPostsUseCase:
-                    GetPostsUseCase(PostRepositoryImpl(api: PostApi())))
+                getPostsUseCase: GetPostsUseCase(
+                    PostRepositoryImpl(api: PostApi(), storage: PostStorage())))
               ..add(FetchPosts()),
             child: const PostsList()));
   }
@@ -33,14 +34,19 @@ class PostsList extends StatelessWidget {
         if (state.status == PostStatus.failure) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(const SnackBar(content: Text("Failed to fetch posts")));
+            ..showSnackBar(
+                const SnackBar(content: Text("Failed to fetch posts")));
         }
       },
       child: BlocBuilder<PostBloc, PostState>(
         builder: (context, state) {
-          switch (state.status) {              
+          switch (state.status) {
             case PostStatus.success:
               return PostListView(state: state);
+            case PostStatus.failure:
+              return state.posts.isNotEmpty 
+                ? PostListView(state: state) 
+                : const Center(child: Text("No data"));
             default:
               return const Center(child: CircularProgressIndicator());
           }
