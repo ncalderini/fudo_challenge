@@ -16,19 +16,25 @@ class PostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final getPostsUseCase = GetPostsUseCase(
-      PostRepositoryImpl(api: PostApi(), storage: PostStorage()));
+        PostRepositoryImpl(api: PostApi(), storage: PostStorage()));
 
     final searchPostsUseCase = SearchPostsUseCase(
-      PostRepositoryImpl(api: PostApi(), storage: PostStorage()), UserApi());
+        PostRepositoryImpl(api: PostApi(), storage: PostStorage()), UserApi());
 
     return Scaffold(
-        appBar: AppBar(title: const Text("Posts")),
-        body: BlocProvider<PostBloc>(
-            create: (context) => PostBloc(
-                getPostsUseCase: getPostsUseCase,
-                searchPostsUseCase: searchPostsUseCase)
-              ..add(FetchPosts()),
-            child: const PostsList()));
+      appBar: AppBar(title: const Text("Posts")),
+      body: BlocProvider<PostBloc>(
+          create: (context) => PostBloc(
+              getPostsUseCase: getPostsUseCase,
+              searchPostsUseCase: searchPostsUseCase)
+            ..add(FetchPosts()),
+          child: const PostsList()),
+      floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {
+            //Create post here
+          }),
+    );
   }
 }
 
