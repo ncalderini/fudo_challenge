@@ -10,6 +10,9 @@ class SearchPostsUseCase {
 
   Future<List<Post>> call({required String name}) async {
     final user = await _userApi.getUser(name: name);
-    return _postRepository.searchPosts(userId: user.id);
+    if (user != null) {
+      return _postRepository.searchPosts(userId: user.id);
+    }
+    return [];
   }
 }
