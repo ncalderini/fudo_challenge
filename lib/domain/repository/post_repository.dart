@@ -6,6 +6,7 @@ import 'package:fudo_challenge/domain/mappers/post_mapper.dart';
 
 abstract class PostRepository {
   Future<List<Post>> getPosts();
+  Future<List<Post>> searchPosts({required int userId});
 }
 
 class PostRepositoryImpl implements PostRepository {
@@ -35,5 +36,18 @@ class PostRepositoryImpl implements PostRepository {
         .toList();
       throw InternetException(cachedData: cachedPosts);
     } 
+  }
+  
+  @override
+  Future<List<Post>> searchPosts({required int userId}) async {
+    try {
+      //Simulate slow network
+      await Future.delayed(const Duration(seconds: 5));
+      
+      final fetchedList = await _api.searchPosts(userId: userId);
+      return fetchedList.map((post) => PostMapper.fromPostDto(post)).toList();
+    } catch (_) {
+      rethrow;
+    }
   }
 }

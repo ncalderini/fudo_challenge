@@ -12,4 +12,13 @@ class PostApi {
       rethrow;
     }
   }
+
+  Future<List<PostDto>> searchPosts({required int userId}) async {
+    try {
+      final response = await _dio.get('https://jsonplaceholder.typicode.com/posts?userId=$userId');
+      return (response.data as List).map((post) => PostDto.fromJson(post)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
