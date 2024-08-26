@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
       body: BlocProvider<LoginBloc>(
         create: (context) =>
             LoginBloc(loginUserUseCase: const LoginUserUseCase()),
-        child: const LoginForm(),
+        child: const SingleChildScrollView(child: LoginForm()),
       ),
     );
   }
@@ -46,8 +46,8 @@ class _LoginFormState extends State<LoginForm> {
                   style: TextStyle(color: Colors.white)),
               backgroundColor: Colors.green.shade600,
             ));
-          Route route = MaterialPageRoute(
-              builder: (context) => const PostsPage());
+          Route route =
+              MaterialPageRoute(builder: (context) => const PostsPage());
           Navigator.pushReplacement(context, route);
         } else if (state is LoginError) {
           ScaffoldMessenger.of(context)
@@ -122,6 +122,7 @@ class _PasswordWidgetState extends State<PasswordWidget> {
         context.select((LoginBloc bloc) => bloc.state.isPasswordValid);
 
     return TextFormField(
+      textInputAction: TextInputAction.done,
       onChanged: (value) =>
           context.read<LoginBloc>().add(PasswordChanged(password: value)),
       decoration: InputDecoration(
@@ -156,6 +157,7 @@ class EmailInput extends StatelessWidget {
         context.select((LoginBloc bloc) => bloc.state.isMailValid);
 
     return TextFormField(
+        textInputAction: TextInputAction.next,
         onChanged: (value) =>
             context.read<LoginBloc>().add(EmailChanged(email: value)),
         decoration: const InputDecoration(
