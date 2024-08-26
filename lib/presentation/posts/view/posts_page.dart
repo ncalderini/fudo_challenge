@@ -9,6 +9,7 @@ import 'package:fudo_challenge/domain/usecase/search_posts.dart';
 import 'package:fudo_challenge/presentation/posts/bloc/post_bloc.dart';
 import 'package:fudo_challenge/presentation/posts/bloc/post_event.dart';
 import 'package:fudo_challenge/presentation/posts/bloc/post_state.dart';
+import 'package:fudo_challenge/presentation/posts/view/create_post_page.dart';
 
 class PostsPage extends StatelessWidget {
   const PostsPage({super.key});
@@ -32,7 +33,8 @@ class PostsPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
-            //Create post here
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const CreatePostPage()));
           }),
     );
   }
@@ -44,37 +46,23 @@ class PostsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<PostBloc, PostState>(
-      listener: (context, state) {
-        if (state.status == PostStatus.failure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-                const SnackBar(content: Text("Failed to fetch posts")));
-        }
-      },
-      child: BlocBuilder<PostBloc, PostState>(
-        builder: (context, state) {
-          switch (state.status) {
-            case PostStatus.success:
-              return Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: PostsSearchBar(),
-                  ),
-                  Expanded(child: PostListView(state: state)),
-                ],
-              );
-            case PostStatus.failure:
-              return state.posts.isNotEmpty
-                  ? PostListView(state: state)
-                  : const Center(child: Text("No data"));
-            default:
-              return const Center(child: CircularProgressIndicator());
+        listener: (context, state) {
+          if (state.status == PostStatus.failure) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                  const SnackBar(content: Text("Failed to fetch posts")));
           }
         },
-      ),
-    );
+        child: const Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: PostsSearchBar(),
+            ),
+            Expanded(child: PostListView()),
+          ],
+        ));
   }
 }
 
@@ -95,21 +83,29 @@ class PostsSearchBar extends StatelessWidget {
 }
 
 class PostListView extends StatelessWidget {
-  const PostListView({super.key, required this.state});
-
-  final PostState state;
+  const PostListView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(state.posts[index].title,
-                style: const TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: Text(state.posts[index].body),
-          );
-        },
-        separatorBuilder: (context, index) => const Divider(),
-        itemCount: state.posts.length);
+    return BlocBuilder<PostBloc, PostState>(builder: (context, state) {
+      switch (state.status) {
+        case PostStatus.success:
+        case PostStatus.failure:
+          return state.posts.isNotEmpty
+              ? ListView.separated(
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(state.posts[index].title,
+                          style: const TextStyle(fontWeight: FontWeight.w700)),
+                      subtitle: Text(state.posts[index].body),
+                    );
+                  },
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemCount: state.posts.length)
+              : const Center(child: Text("No data"));
+        default:
+          return const Center(child: CircularProgressIndicator());
+      }
+    });
   }
 }
